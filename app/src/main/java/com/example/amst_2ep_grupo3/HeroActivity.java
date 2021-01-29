@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,7 +14,15 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,61 +33,102 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HeroActivity extends AppCompatActivity {
+    public BarChart graficoBarras;
 
     private String id;
     private Context context;
     private RequestQueue requestQueue = null;
-
+    private String token="5443515708995737";
+    private RequestQueue ListaRequest = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hero);
         context = this;
-        Intent intent = getIntent();
+        Intent intent=getIntent();
+        id=intent.getStringExtra("id");
         //id = intent.getStringExtra("id");
         id = "1";
         requestQueue = Volley.newRequestQueue(context);
-        loadData();
+        this.iniciarGrafico();
+        solicitarHeroe(id);
     }
 
-    private void loadData() {
-        String token = "5443515708995737";
-        String url = "https://www.superheroapi.com/api.php/" + token + "/" + id;
-        url = "https://www.superheroapi.com/api.php/5443515708995737/1";
-
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                url,
-                null,
-                new Response.Listener<JSONArray>() {
-
-                    @Override
-                    public void onResponse(JSONArray response) {
-
-                        showData(response);
-                        Log.d("Hero", response.toString());
-                        Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Hero", error.getMessage());
-                    }
+    public void solicitarHeroe(String id){
+        System.out.println(id);
+        String url_registros ="https://www.superheroapi.com/api.php/"+token+"/"+id;
+        JsonObjectRequest requestRegistros = new JsonObjectRequest(Request.Method.GET, url_registros, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject  response) {
+                try {
+                    JSONArray myJsonArray = response.getJSONArray("powerstats");
+//                    showData(myJsonArray);
+                    actualizarGrafico(myJsonArray);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-        ) {
+
+//                System.out.println("hola people");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error);
+//                System.out.println("erorwaw");
+            }
+        }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> params = new HashMap<>();
-                params.put("Content-Type", "application/json");
-
+                params.put("Authorization", "JWT " + token);
                 return params;
             }
         };
-        requestQueue.add(jsonArrayRequest);
+        ListaRequest.add(requestRegistros);
 
+    }
+    private void actualizarGrafico(JSONArray temperaturas) {
+        JSONObject registro_temp;
+        String temp;
+        String date;
+        int count = 0;
+        float temp_val;
+        ArrayList<BarEntry> dato_temp = new ArrayList<>();
+        try {
+            for (int i = 0; i < temperaturas.length(); i++) {
+                registro_temp = (JSONObject) temperaturas.get(i);
+                if (registro_temp.getString("id").equals(id)) {
+//                    temp = registro_temp.getString("value");
+//                    date = registro_temp.getString("date_created");
+//                    temp_val = Float.parseFloat(temp);
+                    inteligencia= registro_temp.getString("")
+
+
+                    dato_temp.add(new BarEntry(count, temp_val));
+                    count++;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            System.out.println("error");
+        }
+        System.out.println(dato_temp);
+        llenarGrafico(dato_temp);
+    }
+
+    public void iniciarGrafico() {
+        graficoBarras = findViewById(R.id.barChart);
+        graficoBarras.getDescription().setEnabled(false);
+        graficoBarras.setMaxVisibleValueCount(60);
+        graficoBarras.setPinchZoom(false);
+        graficoBarras.setDrawBarShadow(false);
+        graficoBarras.setDrawGridBackground(false);
+        XAxis xAxis = graficoBarras.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        graficoBarras.getAxisLeft().setDrawGridLines(false);
+        graficoBarras.animateY(1500);
+        graficoBarras.getLegend().setEnabled(false);
     }
 
     public void showData(JSONArray data) {
@@ -111,5 +161,33 @@ public class HeroActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void llenarGrafico(ArrayList<BarEntry> dato_temp) {
+        BarDataSet temperaturasDataSet;
+        if (graficoBarras.getData() != null && graficoBarras.getData().getDataSetCount() > 0) {
+            temperaturasDataSet = (BarDataSet) graficoBarras.getData().getDataSetByIndex(0);
+            temperaturasDataSet.setValues(dato_temp);
+            graficoBarras.getData().notifyDataChanged();
+            graficoBarras.notifyDataSetChanged();
+        } else {
+            temperaturasDataSet = new BarDataSet(dato_temp, "Data Set");
+            temperaturasDataSet.setColors(ColorTemplate.VORDIPLOM_COLORS);
+            temperaturasDataSet.setDrawValues(true);
+            ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+            dataSets.add(temperaturasDataSet);
+            BarData data = new BarData(dataSets);
+            graficoBarras.setData(data);
+            graficoBarras.setFitBars(true);
+        }
+        graficoBarras.invalidate();
+        final Handler handler = new Handler();
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                solicitarHeroe(id);
+            }
+        };
+        handler.postDelayed(runnable, 3000);
     }
 }

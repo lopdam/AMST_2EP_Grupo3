@@ -42,6 +42,7 @@ public class HerosActivity extends AppCompatActivity {
     private String token="5443515708995737";
     private RequestQueue ListaRequest = null;
     private LinearLayout heroesContainer;
+    private TextView heros_result;
     private Map<String, TextView> heroesMarvel;
     private HerosActivity contexto;
     @Override
@@ -106,6 +107,7 @@ public class HerosActivity extends AppCompatActivity {
         TextView valorRegistro;
 //        contenedorTemperaturas = findViewById(R.id.cont_temperaturas);
         heroesContainer = findViewById(R.id.heros_container);
+        heros_result = findViewById(R.id.heros_result);
         LinearLayout.LayoutParams parametrosLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         try {
 //            JSONArray myJsonArray = heroes.getJSONArray("results");
@@ -129,11 +131,15 @@ public class HerosActivity extends AppCompatActivity {
                 myButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getApplicationContext(), " Listener botón " + v.getTag() , Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), " Listener botón " + v.getTag() , Toast.LENGTH_SHORT).show();
+                        Intent intent =new Intent(context,HeroActivity.class);
+                        intent.putExtra("id",search);
+                        startActivity(intent);
                     }
                 });
                 heroesContainer.addView(myButton);
             }
+            heros_result.setText(String.valueOf(heroes.length()));
         } catch (JSONException e) {
             e.printStackTrace();
             System.out.println("error");
