@@ -73,13 +73,18 @@ public class HerosActivity extends AppCompatActivity {
                     JSONArray myJsonArray = response.getJSONArray("results");
                     mostrarHeroes(myJsonArray);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Toast.makeText(context, "no hubo resultados", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, FindHeroActivity.class);
+                    startActivity(intent);
+//                    e.printStackTrace();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println(error);
+//                System.out.println(error);
+
+
             }
         }) {
             @Override
