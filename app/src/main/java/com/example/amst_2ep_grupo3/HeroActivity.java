@@ -59,9 +59,7 @@ public class HeroActivity extends AppCompatActivity {
         id = intent.getStringExtra("id");
         nombre = intent.getStringExtra("nombre");
         nombreCompleto = intent.getStringExtra("nombreCompleto");
-        //id = intent.getStringExtra("id");
         System.out.println("este es el id: " + id);
-//        requestQueue = Volley.newRequestQueue(context);
         ListaRequest = Volley.newRequestQueue(this);
         this.iniciarGrafico();
         solicitarHeroe(id);
@@ -75,24 +73,14 @@ public class HeroActivity extends AppCompatActivity {
         JsonObjectRequest requestRegistros = new JsonObjectRequest(Request.Method.GET, url_registros, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-
-//                    JSONArray myJsonArray = response.getJSONArray("powerstats");
-//                    showData(myJsonArray);
-//                    System.out.println(response);
                 txtNombre = findViewById(R.id.txtNombre);
-//                txtNombreCompleto= findViewById(R.id.txtNombreCompleto);
                 txtNombre.setText(nombre);
-//                txtNombreCompleto.setText(nombreCompleto);
                 actualizarGrafico(response);
-
-
-//                System.out.println("hola people");
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println(error);
-//                System.out.println("erorwaw");
             }
         }) {
             @Override
@@ -113,17 +101,12 @@ public class HeroActivity extends AppCompatActivity {
         JsonObjectRequest requestRegistros = new JsonObjectRequest(Request.Method.GET, url_registros, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-
                 actualizarDatos(response);
-
-
-//                System.out.println("hola people");
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println(error);
-//                System.out.println("erorwaw");
             }
         }) {
             @Override
@@ -157,13 +140,8 @@ public class HeroActivity extends AppCompatActivity {
         String durabilidad;
         String poder;
         String combate;
-
-//        String date;
-
         ArrayList<BarEntry> dato_temp = new ArrayList<>();
         try {
-
-
             inteligencia = temperaturas.getString("intelligence");
             System.out.println(inteligencia);
             fuerza = temperaturas.getString("strength");
@@ -172,14 +150,12 @@ public class HeroActivity extends AppCompatActivity {
             poder = temperaturas.getString("power");
             combate = temperaturas.getString("combat");
 
-
             dato_temp.add(new BarEntry(0, Integer.parseInt(inteligencia)));
             dato_temp.add(new BarEntry(1, Integer.parseInt(fuerza)));
             dato_temp.add(new BarEntry(2, Integer.parseInt(velocidad)));
             dato_temp.add(new BarEntry(3, Integer.parseInt(durabilidad)));
             dato_temp.add(new BarEntry(4, Integer.parseInt(poder)));
             dato_temp.add(new BarEntry(5, Integer.parseInt(combate)));
-
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -197,56 +173,20 @@ public class HeroActivity extends AppCompatActivity {
         graficoBarras.setDrawBarShadow(false);
         graficoBarras.setDrawGridBackground(false);
         XAxis xAxis = graficoBarras.getXAxis();
-//        XAxis.setValueFormatter(new IndexAxisValueFormatter(labelsname));
         Legend l = graficoBarras.getLegend();
         ArrayList<String> labelsname = new ArrayList<>();
         String[] nombresOperacion = {"inteligencia", "fuerza", "velocidad", "durabilidad", "poder", "combate"};
         for (int i = 0; nombresOperacion.length > i; i++) {
-            //barEntries.add(new BarEntry(i,contador));
             String tipo = nombresOperacion[i];
             labelsname.add(tipo);
 
         }
-
         xAxis.setValueFormatter(new IndexAxisValueFormatter(labelsname));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
         graficoBarras.getAxisLeft().setDrawGridLines(false);
         graficoBarras.animateY(1500);
         graficoBarras.getLegend().setEnabled(false);
-        System.out.println("sali bien");
-    }
-
-    public void showData(JSONArray data) {
-
-
-        try {
-            for (int i = 0; i < data.length(); i++) {
-                JSONObject registro_data = (JSONObject) data.get(i);
-                Log.d("Hero", registro_data.toString());
-
-                if (registro_data.getString("key").equals("powerstats")) {
-
-                    JSONArray dataHero = data.getJSONArray(i);
-                    Log.d("Hero", dataHero.toString());
-
-                    for (int k = 0; k < dataHero.length(); k++) {
-                        JSONObject habilidad = (JSONObject) dataHero.get(k);
-                        String nameHabilidad = habilidad.getString("key");
-                        String valueHabilidad = habilidad.getString("value");
-
-
-                        Toast.makeText(context, nameHabilidad + ":" + valueHabilidad, Toast.LENGTH_SHORT).show();
-                    }
-
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            System.out.println("error");
-        }
-
-
     }
 
     private void llenarGrafico(ArrayList<BarEntry> dato_temp) {

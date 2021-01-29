@@ -50,19 +50,14 @@ public class HerosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_heros);
-
         context = getApplicationContext();
-
         Intent intent = getIntent();
         search = intent.getStringExtra("search");
-
         Toast.makeText(context, search, Toast.LENGTH_SHORT).show();
 
         heroesMarvel = new HashMap<String, TextView>();
         ListaRequest = Volley.newRequestQueue(this);
         contexto = this;
-
-
         this.solicitarHeroes(search);
 
 
@@ -80,14 +75,11 @@ public class HerosActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-//                System.out.println("hola people");
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println(error);
-//                System.out.println("erorwaw");
             }
         }) {
             @Override
@@ -106,40 +98,26 @@ public class HerosActivity extends AppCompatActivity {
         String registroNombre;
         String registroNombreCompleto;
         JSONObject registroHeroe;
-//        Button nuevoRegistro;
         TextView valorRegistro;
-//        contenedorTemperaturas = findViewById(R.id.cont_temperaturas);
         heroesContainer = findViewById(R.id.heros_container);
         heros_result = findViewById(R.id.heros_result);
         LinearLayout.LayoutParams parametrosLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         try {
-//            JSONArray myJsonArray = heroes.getJSONArray("results");
             for (int i = 0; i < heroes.length(); i++) {
                 registroHeroe = (JSONObject) heroes.get(i);
                 registroId = registroHeroe.getString("id");
                 registroNombre = registroHeroe.getString("name");
 
-
                 System.out.println("hoooooola");
                 System.out.println(registroId);
                 System.out.println(registroNombre);
-//                System.out.println(registroHeroe);
-
                 Button myButton = new Button(this);
                 myButton.setText(registroNombre);
-//
-//                        valorRegistro = new TextView(this);
-//                        valorRegistro.setText(registroHeroe.getString("name"));
-//
-//                        heroesMarvel.put(registroId, valorRegistro);
-
                 String finalRegistroId = registroId;
                 String finalRegistroNombre = registroNombre;
-
                 myButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        Toast.makeText(getApplicationContext(), " Listener botón " + v.getTag() , Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(context, HeroActivity.class);
                         intent.putExtra("id", finalRegistroId);
                         intent.putExtra("nombre", finalRegistroNombre);
