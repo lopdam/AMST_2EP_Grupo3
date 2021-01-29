@@ -199,9 +199,9 @@ public class HeroActivity extends AppCompatActivity {
         XAxis xAxis = graficoBarras.getXAxis();
 //        XAxis.setValueFormatter(new IndexAxisValueFormatter(labelsname));
         Legend l = graficoBarras.getLegend();
-        ArrayList<String> labelsname= new ArrayList<>();
-        String[] nombresOperacion = {"inteligencia","fuerza","velocidad","durabilidad","poder","combate"};
-        for(int i=0; nombresOperacion.length>i;i++ ){
+        ArrayList<String> labelsname = new ArrayList<>();
+        String[] nombresOperacion = {"inteligencia", "fuerza", "velocidad", "durabilidad", "poder", "combate"};
+        for (int i = 0; nombresOperacion.length > i; i++) {
             //barEntries.add(new BarEntry(i,contador));
             String tipo = nombresOperacion[i];
             labelsname.add(tipo);

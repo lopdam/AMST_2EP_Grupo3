@@ -37,25 +37,26 @@ import java.util.Map;
 
 public class HerosActivity extends AppCompatActivity {
 
-    private  String search;
+    private String search;
     private Context context;
-    private String token="5443515708995737";
+    private String token = "5443515708995737";
     private RequestQueue ListaRequest = null;
     private LinearLayout heroesContainer;
     private TextView heros_result;
     private Map<String, TextView> heroesMarvel;
     private HerosActivity contexto;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_heros);
 
-        context=getApplicationContext();
+        context = getApplicationContext();
 
-        Intent intent=getIntent();
-        search=intent.getStringExtra("search");
+        Intent intent = getIntent();
+        search = intent.getStringExtra("search");
 
-        Toast.makeText(context,search,Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, search, Toast.LENGTH_SHORT).show();
 
         heroesMarvel = new HashMap<String, TextView>();
         ListaRequest = Volley.newRequestQueue(this);
@@ -67,12 +68,12 @@ public class HerosActivity extends AppCompatActivity {
 
     }
 
-    public void solicitarHeroes(String name){
+    public void solicitarHeroes(String name) {
         System.out.println(name);
-        String url_registros ="https://www.superheroapi.com/api.php/"+token+"/search/"+name;
+        String url_registros = "https://www.superheroapi.com/api.php/" + token + "/search/" + name;
         JsonObjectRequest requestRegistros = new JsonObjectRequest(Request.Method.GET, url_registros, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject  response) {
+            public void onResponse(JSONObject response) {
                 try {
                     JSONArray myJsonArray = response.getJSONArray("results");
                     mostrarHeroes(myJsonArray);
@@ -99,6 +100,7 @@ public class HerosActivity extends AppCompatActivity {
         ListaRequest.add(requestRegistros);
 
     }
+
     private void mostrarHeroes(JSONArray heroes) {
         String registroId;
         String registroNombre;
@@ -115,8 +117,7 @@ public class HerosActivity extends AppCompatActivity {
             for (int i = 0; i < heroes.length(); i++) {
                 registroHeroe = (JSONObject) heroes.get(i);
                 registroId = registroHeroe.getString("id");
-                registroNombre= registroHeroe.getString("name");
-
+                registroNombre = registroHeroe.getString("name");
 
 
                 System.out.println("hoooooola");
@@ -139,7 +140,7 @@ public class HerosActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 //                        Toast.makeText(getApplicationContext(), " Listener botón " + v.getTag() , Toast.LENGTH_SHORT).show();
-                        Intent intent =new Intent(context,HeroActivity.class);
+                        Intent intent = new Intent(context, HeroActivity.class);
                         intent.putExtra("id", finalRegistroId);
                         intent.putExtra("nombre", finalRegistroNombre);
 
