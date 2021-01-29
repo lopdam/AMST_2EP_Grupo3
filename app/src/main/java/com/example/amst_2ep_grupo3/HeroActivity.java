@@ -48,8 +48,9 @@ public class HeroActivity extends AppCompatActivity {
         Intent intent=getIntent();
         id=intent.getStringExtra("id");
         //id = intent.getStringExtra("id");
-        id = "1";
-        requestQueue = Volley.newRequestQueue(context);
+        System.out.println("este es el id: "+id);
+//        requestQueue = Volley.newRequestQueue(context);
+        ListaRequest = Volley.newRequestQueue(this);
         this.iniciarGrafico();
         solicitarHeroe(id);
     }
@@ -57,14 +58,17 @@ public class HeroActivity extends AppCompatActivity {
     public void solicitarHeroe(String id){
         System.out.println(id);
         String url_registros ="https://www.superheroapi.com/api.php/"+token+"/"+id;
+        System.out.println(url_registros);
         JsonObjectRequest requestRegistros = new JsonObjectRequest(Request.Method.GET, url_registros, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject  response) {
                 try {
                     JSONArray myJsonArray = response.getJSONArray("powerstats");
 //                    showData(myJsonArray);
+//                    System.out.println(myJsonArray);
                     actualizarGrafico(myJsonArray);
                 } catch (JSONException e) {
+
                     e.printStackTrace();
                 }
 
@@ -89,24 +93,44 @@ public class HeroActivity extends AppCompatActivity {
     }
     private void actualizarGrafico(JSONArray temperaturas) {
         JSONObject registro_temp;
-        String temp;
-        String date;
+        String inteligencia;
+        String fuerza;
+        String velocidad;
+        String durabilidad;
+        String poder;
+        String combate;
+
+//        String date;
         int count = 0;
         float temp_val;
         ArrayList<BarEntry> dato_temp = new ArrayList<>();
         try {
             for (int i = 0; i < temperaturas.length(); i++) {
                 registro_temp = (JSONObject) temperaturas.get(i);
-                if (registro_temp.getString("id").equals(id)) {
+
 //                    temp = registro_temp.getString("value");
 //                    date = registro_temp.getString("date_created");
 //                    temp_val = Float.parseFloat(temp);
-                    inteligencia= registro_temp.getString("")
+                    inteligencia= String.valueOf(temperaturas.get(1));
+//                    fuerza =registro_temp.getString("strength");
+//                    velocidad=registro_temp.getString("speed");
+//                    durabilidad=registro_temp.getString("durability");
+//                    poder=registro_temp.getString("power");
+//                    combate=registro_temp.getString("combat");
 
 
-                    dato_temp.add(new BarEntry(count, temp_val));
+
+                    dato_temp.add(new BarEntry(count,Integer.parseInt(inteligencia)));
+//                    dato_temp.add(new BarEntry(count,Integer.parseInt(fuerza)));
+//                    dato_temp.add(new BarEntry(count,Integer.parseInt(velocidad)));
+//                    dato_temp.add(new BarEntry(count,Integer.parseInt(durabilidad)));
+//                    dato_temp.add(new BarEntry(count,Integer.parseInt(poder)));
+//                    dato_temp.add(new BarEntry(count,Integer.parseInt(combate)));
+
+
+
                     count++;
-                }
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -129,6 +153,7 @@ public class HeroActivity extends AppCompatActivity {
         graficoBarras.getAxisLeft().setDrawGridLines(false);
         graficoBarras.animateY(1500);
         graficoBarras.getLegend().setEnabled(false);
+        System.out.println("sali bien");
     }
 
     public void showData(JSONArray data) {

@@ -128,12 +128,13 @@ public class HerosActivity extends AppCompatActivity {
 //
 //                        heroesMarvel.put(registroId, valorRegistro);
 
+                String finalRegistroId = registroId;
                 myButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 //                        Toast.makeText(getApplicationContext(), " Listener botón " + v.getTag() , Toast.LENGTH_SHORT).show();
                         Intent intent =new Intent(context,HeroActivity.class);
-                        intent.putExtra("id",search);
+                        intent.putExtra("id", finalRegistroId);
                         startActivity(intent);
                     }
                 });
