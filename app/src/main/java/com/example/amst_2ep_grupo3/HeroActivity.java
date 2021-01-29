@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -17,10 +18,13 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -30,47 +34,57 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HeroActivity extends AppCompatActivity {
     public BarChart graficoBarras;
 
     private String id;
+    private String nombre;
+    private String nombreCompleto;
     private Context context;
     private RequestQueue requestQueue = null;
-    private String token="5443515708995737";
+    private String token = "5443515708995737";
     private RequestQueue ListaRequest = null;
+    private TextView txtNombre;
+    private TextView txtNombreCompleto;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hero);
         context = this;
-        Intent intent=getIntent();
-        id=intent.getStringExtra("id");
+        Intent intent = getIntent();
+        id = intent.getStringExtra("id");
+        nombre = intent.getStringExtra("nombre");
+        nombreCompleto = intent.getStringExtra("nombreCompleto");
         //id = intent.getStringExtra("id");
-        System.out.println("este es el id: "+id);
+        System.out.println("este es el id: " + id);
 //        requestQueue = Volley.newRequestQueue(context);
         ListaRequest = Volley.newRequestQueue(this);
         this.iniciarGrafico();
         solicitarHeroe(id);
+        solicitarDatosHeroe(id);
     }
 
-    public void solicitarHeroe(String id){
+    public void solicitarHeroe(String id) {
         System.out.println(id);
-        String url_registros ="https://www.superheroapi.com/api.php/"+token+"/"+id;
+        String url_registros = "https://www.superheroapi.com/api.php/" + token + "/" + id + "/powerstats";
         System.out.println(url_registros);
         JsonObjectRequest requestRegistros = new JsonObjectRequest(Request.Method.GET, url_registros, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject  response) {
-                try {
-                    JSONArray myJsonArray = response.getJSONArray("powerstats");
-//                    showData(myJsonArray);
-//                    System.out.println(myJsonArray);
-                    actualizarGrafico(myJsonArray);
-                } catch (JSONException e) {
+            public void onResponse(JSONObject response) {
 
-                    e.printStackTrace();
-                }
+//                    JSONArray myJsonArray = response.getJSONArray("powerstats");
+//                    showData(myJsonArray);
+//                    System.out.println(response);
+                txtNombre = findViewById(R.id.txtNombre);
+//                txtNombreCompleto= findViewById(R.id.txtNombreCompleto);
+                txtNombre.setText(nombre);
+//                txtNombreCompleto.setText(nombreCompleto);
+                actualizarGrafico(response);
+
 
 //                System.out.println("hola people");
             }
@@ -91,7 +105,51 @@ public class HeroActivity extends AppCompatActivity {
         ListaRequest.add(requestRegistros);
 
     }
-    private void actualizarGrafico(JSONArray temperaturas) {
+
+    public void solicitarDatosHeroe(String id) {
+        System.out.println(id);
+        String url_registros = "https://www.superheroapi.com/api.php/" + token + "/" + id + "/biography";
+        System.out.println(url_registros);
+        JsonObjectRequest requestRegistros = new JsonObjectRequest(Request.Method.GET, url_registros, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                actualizarDatos(response);
+
+
+//                System.out.println("hola people");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error);
+//                System.out.println("erorwaw");
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Authorization", "JWT " + token);
+                return params;
+            }
+        };
+        ListaRequest.add(requestRegistros);
+
+    }
+
+    private void actualizarDatos(JSONObject temperaturas) {
+        try {
+            String fullname = temperaturas.getString("full-name");
+            System.out.println(fullname);
+            txtNombreCompleto = findViewById(R.id.txtNombreCompleto);
+            txtNombreCompleto.setText(fullname);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void actualizarGrafico(JSONObject temperaturas) {
         JSONObject registro_temp;
         String inteligencia;
         String fuerza;
@@ -101,37 +159,28 @@ public class HeroActivity extends AppCompatActivity {
         String combate;
 
 //        String date;
-        int count = 0;
-        float temp_val;
+
         ArrayList<BarEntry> dato_temp = new ArrayList<>();
         try {
-            for (int i = 0; i < temperaturas.length(); i++) {
-                registro_temp = (JSONObject) temperaturas.get(i);
-
-//                    temp = registro_temp.getString("value");
-//                    date = registro_temp.getString("date_created");
-//                    temp_val = Float.parseFloat(temp);
-                    inteligencia= String.valueOf(temperaturas.get(1));
-//                    fuerza =registro_temp.getString("strength");
-//                    velocidad=registro_temp.getString("speed");
-//                    durabilidad=registro_temp.getString("durability");
-//                    poder=registro_temp.getString("power");
-//                    combate=registro_temp.getString("combat");
 
 
+            inteligencia = temperaturas.getString("intelligence");
+            System.out.println(inteligencia);
+            fuerza = temperaturas.getString("strength");
+            velocidad = temperaturas.getString("speed");
+            durabilidad = temperaturas.getString("durability");
+            poder = temperaturas.getString("power");
+            combate = temperaturas.getString("combat");
 
-                    dato_temp.add(new BarEntry(count,Integer.parseInt(inteligencia)));
-//                    dato_temp.add(new BarEntry(count,Integer.parseInt(fuerza)));
-//                    dato_temp.add(new BarEntry(count,Integer.parseInt(velocidad)));
-//                    dato_temp.add(new BarEntry(count,Integer.parseInt(durabilidad)));
-//                    dato_temp.add(new BarEntry(count,Integer.parseInt(poder)));
-//                    dato_temp.add(new BarEntry(count,Integer.parseInt(combate)));
+
+            dato_temp.add(new BarEntry(0, Integer.parseInt(inteligencia)));
+            dato_temp.add(new BarEntry(1, Integer.parseInt(fuerza)));
+            dato_temp.add(new BarEntry(2, Integer.parseInt(velocidad)));
+            dato_temp.add(new BarEntry(3, Integer.parseInt(durabilidad)));
+            dato_temp.add(new BarEntry(4, Integer.parseInt(poder)));
+            dato_temp.add(new BarEntry(5, Integer.parseInt(combate)));
 
 
-
-                    count++;
-
-            }
         } catch (JSONException e) {
             e.printStackTrace();
             System.out.println("error");
@@ -148,6 +197,18 @@ public class HeroActivity extends AppCompatActivity {
         graficoBarras.setDrawBarShadow(false);
         graficoBarras.setDrawGridBackground(false);
         XAxis xAxis = graficoBarras.getXAxis();
+//        XAxis.setValueFormatter(new IndexAxisValueFormatter(labelsname));
+        Legend l = graficoBarras.getLegend();
+        ArrayList<String> labelsname= new ArrayList<>();
+        String[] nombresOperacion = {"inteligencia","fuerza","velocidad","durabilidad","poder","combate"};
+        for(int i=0; nombresOperacion.length>i;i++ ){
+            //barEntries.add(new BarEntry(i,contador));
+            String tipo = nombresOperacion[i];
+            labelsname.add(tipo);
+
+        }
+
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(labelsname));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
         graficoBarras.getAxisLeft().setDrawGridLines(false);
