@@ -9,9 +9,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AMST_2EP_Grupo3">
-        <activity android:name=".HeroActivity"></activity>
-        <activity android:name=".HerosActivity" />
-        <activity android:name=".FindHeroActivity" />
+        <activity
+            android:name=".HeroActivity"
+            android:label="Hero"></activity>
+        <activity
+            android:name=".HerosActivity"
+            android:label="List Heros" />
+        <activity
+            android:name=".FindHeroActivity"
+            android:label="Find Hero" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
