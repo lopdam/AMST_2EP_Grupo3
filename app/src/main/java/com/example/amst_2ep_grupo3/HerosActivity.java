@@ -118,21 +118,21 @@ public class HerosActivity extends AppCompatActivity {
                 System.out.println(registroNombre);
 //                System.out.println(registroHeroe);
 
-                        Button myButton = new Button(this);
-                        myButton.setText(registroNombre);
+                Button myButton = new Button(this);
+                myButton.setText(registroNombre);
 //
 //                        valorRegistro = new TextView(this);
 //                        valorRegistro.setText(registroHeroe.getString("name"));
 //
 //                        heroesMarvel.put(registroId, valorRegistro);
 
-                        myButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Toast.makeText(getApplicationContext(), " Listener botón " + v.getTag() , Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        heroesContainer.addView(myButton);
+                myButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getApplicationContext(), " Listener botón " + v.getTag() , Toast.LENGTH_SHORT).show();
+                    }
+                });
+                heroesContainer.addView(myButton);
             }
         } catch (JSONException e) {
             e.printStackTrace();
